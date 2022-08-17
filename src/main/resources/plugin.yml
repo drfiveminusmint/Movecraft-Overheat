@@ -1,0 +1,8 @@
+name: Movecraft-Overheat
+version: '${project.version}'
+main: net.countercraft.movecraft.movecraftoverheat.MovecraftOverheat
+api-version: 1.18
+prefix: Movecraft-Overheat
+authors: [ a4bde ]
+depend: [Movecraft, Movecraft-Combat]
+description: A plugin that adds heat, overheating, and cooling mechanics to Movecraft.
