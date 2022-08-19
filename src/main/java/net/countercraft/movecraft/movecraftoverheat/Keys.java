@@ -1,5 +1,7 @@
 package net.countercraft.movecraft.movecraftoverheat;
 
+import net.countercraft.movecraft.craft.type.CraftType;
+import net.countercraft.movecraft.craft.type.property.DoubleProperty;
 import org.bukkit.NamespacedKey;
 
 public class Keys {
@@ -10,5 +12,14 @@ public class Keys {
     public static final NamespacedKey TNT_HEAT_MULTIPLIER = build("tnt_heat_multiplier");
     public static final NamespacedKey FIREBALL_HEAT_MULTIPLIER = build("fireball_heat_multiplier");
 
-    private static NamespacedKey build (String key) {return new NamespacedKey("movecraftOverheat", key);}
+    public static void register() {
+        CraftType.registerProperty(new DoubleProperty("BaseHeatCapacity", BASE_HEAT_CAPACITY, craftType -> 300.0));
+        CraftType.registerProperty(new DoubleProperty("CapacityPerBlock", HEAT_CAPACITY_PER_BLOCK, craftType -> 0.1));
+        CraftType.registerProperty(new DoubleProperty("BaseHeatDissipation", BASE_HEAT_DISSIPATION, craftType -> 1.0));
+        CraftType.registerProperty(new DoubleProperty("DissipationPerBlock", HEAT_DISSIPATION_PER_BLOCK, craftType -> 0.001));
+        CraftType.registerProperty(new DoubleProperty("TNTHeatMultiplier", TNT_HEAT_MULTIPLIER, craftType -> 1.0));
+        CraftType.registerProperty(new DoubleProperty("FireballHeatMultiplier", FIREBALL_HEAT_MULTIPLIER, craftType -> 1.0));
+    }
+
+    private static NamespacedKey build (String key) {return new NamespacedKey("movecraft-overheat", key);}
 }
