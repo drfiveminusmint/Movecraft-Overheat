@@ -2,15 +2,38 @@ package net.countercraft.movecraft.movecraftoverheat.tracking;
 
 import net.countercraft.movecraft.MovecraftLocation;
 import net.countercraft.movecraft.craft.Craft;
+import net.countercraft.movecraft.craft.PlayerCraft;
 import net.countercraft.movecraft.movecraftoverheat.Keys;
+import net.countercraft.movecraft.movecraftoverheat.MovecraftOverheat;
 import net.countercraft.movecraft.movecraftoverheat.config.Settings;
+import net.countercraft.movecraft.movecraftoverheat.disaster.SurfaceExplosionDisaster;
+import net.countercraft.movecraft.movecraftoverheat.disaster.SurfaceFireDisaster;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.boss.BarColor;
+import org.bukkit.boss.BarStyle;
+import org.bukkit.boss.BossBar;
+import org.jetbrains.annotations.NotNull;
 
 public class CraftHeat {
-    private Craft craft;
+    private final Craft craft;
     private double heatCapacity;
     private double heat;
     private double dissipation;
+    private long lastUpdate;
+    private long lastDisaster;
+    private boolean silenced;
+    private final BossBar bossBar;
+
+    public CraftHeat (@NotNull Craft c) {
+        this.craft = c;
+        this.heat = 0;
+        this.bossBar = Bukkit.createBossBar("Heat: " + this.heat + " / " + this.heatCapacity, BarColor.GREEN, BarStyle.SEGMENTED_6);
+        this.recalculate();
+        if (craft instanceof PlayerCraft) {
+            this.bossBar.addPlayer(((PlayerCraft) this.craft).getPilot());
+        }
+    }
 
     public void recalculate () {
         double newCapacity = craft.getType().getDoubleProperty(Keys.BASE_HEAT_CAPACITY);
@@ -23,13 +46,13 @@ public class CraftHeat {
             if (type == Material.AIR || type == Material.CAVE_AIR || type == Material.FIRE) {
                 continue;
             }
-            if (Settings.heatSinkBlocks.containsKey(type)) {
-                newCapacity += Settings.heatSinkBlocks.get(type) * cPerBlock;
+            if (Settings.HeatSinkBlocks.containsKey(type)) {
+                newCapacity += Settings.HeatSinkBlocks.get(type) * cPerBlock;
             } else {
                 newCapacity += cPerBlock;
             }
-            if (Settings.radiatorBlocks.containsKey(type)) {
-                newDissipation += Settings.radiatorBlocks.get(type) * dPerBlock;
+            if (Settings.RadiatorBlocks.containsKey(type)) {
+                newDissipation += Settings.RadiatorBlocks.get(type) * dPerBlock;
             } else {
                 newDissipation += dPerBlock;
             }
@@ -38,18 +61,87 @@ public class CraftHeat {
         if (newCapacity <= 1.0) {
             newCapacity = 1.0;
         }
+        newCapacity = Math.round(newCapacity);
 
-        heat *= newCapacity / heatCapacity;
+        if (Math.abs(heat) >= 0.01) {
+            heat *= newCapacity/heatCapacity;
+        }
         heatCapacity = newCapacity;
         dissipation = newDissipation;
+
+        updateBossBar();
     }
 
     public void processDissipation () {
-        if (heat > 0) {
+        if (heat > 0.0) {
             heat -= dissipation;
         }
-        if (heat < 0) {
-            heat = 0;
+        if (heat < 0.0) {
+            heat = 0.0;
         }
+    }
+
+    public void checkDisasters () {
+        if (heat > heatCapacity * 1.5 && Math.random() > 0.3) {
+            MovecraftOverheat.getInstance().getHeatManager().addDisaster(new SurfaceExplosionDisaster(this));
+            lastDisaster = System.currentTimeMillis();
+        } else if (heat > heatCapacity && Math.random() > 0.3) {
+            MovecraftOverheat.getInstance().getHeatManager().addDisaster(new SurfaceFireDisaster(this));
+            lastDisaster = System.currentTimeMillis();
+        }
+    }
+
+    public Craft getCraft () {
+        return craft;
+    }
+
+    public long getLastUpdate() {
+        return lastUpdate;
+    }
+
+    public void setLastUpdate(long l) {
+        lastUpdate = l;
+    }
+
+    public double getHeat() {
+        return heat;
+    }
+
+    public double getHeatCapacity() {
+        return heatCapacity;
+    }
+
+    public double getDissipation() {
+        return dissipation;
+    }
+
+    public void addHeat (double heatToAdd) {
+        heat += heatToAdd;
+        updateBossBar();
+    }
+
+    public long getLastDisaster() {
+        return lastDisaster;
+    }
+
+    public boolean getIsSilenced () {
+        return silenced;
+    }
+
+    private void updateBossBar () {
+        bossBar.setTitle("Heat :" + Math.round(heat*10)/10d + " / " + heatCapacity);
+        if (heat >= heatCapacity*1.5) {
+            bossBar.setColor(BarColor.RED);
+        } else if (heat >= heatCapacity) {
+            bossBar.setColor(BarColor.YELLOW);
+        } else {
+            bossBar.setColor(BarColor.GREEN);
+        }
+        bossBar.setProgress(Math.min(1.0, heat/heatCapacity));
+        bossBar.setVisible(heat != 0.0);
+    }
+
+    public void removeBossBar () {
+        bossBar.removeAll();
     }
 }
