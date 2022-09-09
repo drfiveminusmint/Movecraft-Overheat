@@ -6,8 +6,7 @@ import net.countercraft.movecraft.craft.PlayerCraft;
 import net.countercraft.movecraft.movecraftoverheat.Keys;
 import net.countercraft.movecraft.movecraftoverheat.MovecraftOverheat;
 import net.countercraft.movecraft.movecraftoverheat.config.Settings;
-import net.countercraft.movecraft.movecraftoverheat.disaster.SurfaceExplosionDisaster;
-import net.countercraft.movecraft.movecraftoverheat.disaster.SurfaceFireDisaster;
+import net.countercraft.movecraft.movecraftoverheat.disaster.DisasterType;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.boss.BarColor;
@@ -82,11 +81,10 @@ public class CraftHeat {
     }
 
     public void checkDisasters () {
-        if (heat > heatCapacity * 1.5 && Math.random() > 0.3) {
-            MovecraftOverheat.getInstance().getHeatManager().addDisaster(new SurfaceExplosionDisaster(this));
-            lastDisaster = System.currentTimeMillis();
-        } else if (heat > heatCapacity && Math.random() > 0.3) {
-            MovecraftOverheat.getInstance().getHeatManager().addDisaster(new SurfaceFireDisaster(this));
+        for (DisasterType type : MovecraftOverheat.getDisasterTypes()) {
+            if (type.getHeatThreshold() * heatCapacity > heat) continue;
+            if (type.getRandomChance() < Math.random()) continue;
+            MovecraftOverheat.getInstance().getHeatManager().addDisaster(type.createNew(this));
             lastDisaster = System.currentTimeMillis();
         }
     }

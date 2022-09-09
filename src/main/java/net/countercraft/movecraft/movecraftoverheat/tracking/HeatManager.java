@@ -2,6 +2,7 @@ package net.countercraft.movecraft.movecraftoverheat.tracking;
 
 import net.countercraft.movecraft.craft.Craft;
 import net.countercraft.movecraft.movecraftoverheat.MovecraftOverheat;
+import net.countercraft.movecraft.movecraftoverheat.config.Settings;
 import net.countercraft.movecraft.movecraftoverheat.disaster.Disaster;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.Nullable;
@@ -18,13 +19,13 @@ public class HeatManager extends BukkitRunnable {
     public void run() {
         long time = System.currentTimeMillis();
         for (CraftHeat heat : heatTracking.values()) {
-            if (heat.getLastUpdate() + 1000 >= time) {
+            if (heat.getLastUpdate() + Settings.HeatCheckInterval >= time) {
                 continue;
             }
             heat.recalculate();
             heat.processDissipation();
             heat.setLastUpdate(time);
-            if (heat.getLastDisaster() + 10000 <= time) {
+            if (heat.getLastDisaster() + Settings.DisasterCheckInterval <= time) {
                 heat.checkDisasters();
             }
         }
@@ -39,7 +40,9 @@ public class HeatManager extends BukkitRunnable {
         if (heatTracking.get(c) != null) {
            return;
         }
-        MovecraftOverheat.getInstance().getLogger().log(Level.ALL, "Registered a new craft!");
+        if (Settings.DebugMode) {
+            MovecraftOverheat.getInstance().getLogger().log(Level.ALL, "Registered a new craft!");
+        }
         heatTracking.putIfAbsent(c, new CraftHeat(c));
     }
 

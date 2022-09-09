@@ -6,6 +6,7 @@ import net.countercraft.movecraft.craft.PlayerCraft;
 import net.countercraft.movecraft.libs.net.kyori.adventure.key.Key;
 import net.countercraft.movecraft.libs.net.kyori.adventure.sound.Sound;
 import net.countercraft.movecraft.movecraftoverheat.tracking.CraftHeat;
+import net.countercraft.movecraft.util.ChatUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
@@ -14,6 +15,8 @@ import org.bukkit.entity.TNTPrimed;
 public class SurfaceExplosionDisaster implements Disaster {
     private final CraftHeat craftHeat;
     private final Craft craft;
+    public static double HEAT_THRESHOLD = 1.5;
+    public static double RANDOM_CHANCE = 0.3;
 
     public SurfaceExplosionDisaster (CraftHeat heat) {
         craftHeat = heat;
@@ -46,7 +49,7 @@ public class SurfaceExplosionDisaster implements Disaster {
         if (currentBombs > 0) {
             craft.getAudience().playSound(Sound.sound(Key.key("entity.wither.shoot"), Sound.Source.BLOCK, 5.0f, 5.0f));
             if (craft instanceof PlayerCraft) {
-                ((PlayerCraft) craft).getPilot().sendMessage(ChatColor.RED+ "Your craft has overheated and suffered an explosion!");
+                ((PlayerCraft) craft).getPilot().sendMessage(ChatUtils.MOVECRAFT_COMMAND_PREFIX + ChatColor.RED+ " Your craft has overheated and suffered an explosion!");
             }
         }
     }
@@ -55,6 +58,7 @@ public class SurfaceExplosionDisaster implements Disaster {
     public boolean testConditions () {
         return true;
     }
+
 
     @Override
     public CraftHeat getCraftHeat() {

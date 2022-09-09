@@ -6,6 +6,7 @@ import net.countercraft.movecraft.craft.PlayerCraft;
 import net.countercraft.movecraft.libs.net.kyori.adventure.key.Key;
 import net.countercraft.movecraft.libs.net.kyori.adventure.sound.Sound;
 import net.countercraft.movecraft.movecraftoverheat.tracking.CraftHeat;
+import net.countercraft.movecraft.util.ChatUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -16,6 +17,8 @@ import org.bukkit.event.block.BlockIgniteEvent;
 public class SurfaceFireDisaster implements Disaster {
     private final CraftHeat craftHeat;
     private final Craft craft;
+    public static double HEAT_THRESHOLD = 1.0;
+    public static double RANDOM_CHANCE = 0.3;
 
     public SurfaceFireDisaster (CraftHeat heat) {
         craftHeat = heat;
@@ -49,7 +52,7 @@ public class SurfaceFireDisaster implements Disaster {
         if (currentFires > 0) {
             craft.getAudience().playSound(Sound.sound(Key.key("item.firecharge.use"), Sound.Source.BLOCK, 5.0f, 5.0f));
             if (craft instanceof PlayerCraft) {
-                ((PlayerCraft) craft).getPilot().sendMessage(ChatColor.RED+ "The heat of your craft has set it ablaze!");
+                ((PlayerCraft) craft).getPilot().sendMessage(ChatUtils.MOVECRAFT_COMMAND_PREFIX + ChatColor.RED+ " The heat of your craft has set it ablaze!");
             }
         }
     }

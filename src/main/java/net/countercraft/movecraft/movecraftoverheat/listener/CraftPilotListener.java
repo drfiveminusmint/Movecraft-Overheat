@@ -4,6 +4,7 @@ import net.countercraft.movecraft.craft.PlayerCraft;
 import net.countercraft.movecraft.events.CraftDetectEvent;
 import net.countercraft.movecraft.events.CraftReleaseEvent;
 import net.countercraft.movecraft.events.CraftSinkEvent;
+import net.countercraft.movecraft.movecraftoverheat.Keys;
 import net.countercraft.movecraft.movecraftoverheat.MovecraftOverheat;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -15,7 +16,9 @@ public class CraftPilotListener implements Listener {
         if (!(event.getCraft() instanceof PlayerCraft) | event.isCancelled()) {
             return;
         }
-        MovecraftOverheat.getInstance().getHeatManager().registerCraft(event.getCraft());
+        if (event.getCraft().getType().getBoolProperty(Keys.USE_HEAT)) {
+            MovecraftOverheat.getInstance().getHeatManager().registerCraft(event.getCraft());
+        }
     }
 
     @EventHandler(priority = EventPriority.LOW)
