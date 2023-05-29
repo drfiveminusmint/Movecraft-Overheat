@@ -10,12 +10,16 @@ public interface DisasterType {
 
     void setHeatThreshold (double threshold);
 
-    void setRandomChance (double chance);
+    void setBaseRandomChance(double chance);
+
+    void setRandomChancePowerFactor (double factor);
 
     double getHeatThreshold ();
 
     double getRandomChance ();
 
     String getDisasterName();
+
+    double getRandomChancePowerFactor ();
 
 }

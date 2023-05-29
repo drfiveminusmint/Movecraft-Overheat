@@ -55,6 +55,8 @@ public final class MovecraftOverheat extends JavaPlugin {
         Settings.HeatPerFireball = getConfig().getDouble("HeatPerFireball", 0.05);
         Settings.HeatPerGunShot = getConfig().getDouble("HeatPerGunshot", 30);
         Settings.DebugMode = getConfig().getBoolean("DebugMode", false);
+        Settings.HeatCheckInterval = getConfig().getInt("HeatCheckInterval", 1000);
+        Settings.DisasterCheckInterval = getConfig().getInt("DisasterCheckInterval", 10000);
         if (getConfig().contains("HeatSinkBlocks")) {
             Map<String,Object> tempMap = getConfig().getConfigurationSection("HeatSinkBlocks").getValues(false);
             for(String str : tempMap.keySet()) {
@@ -97,7 +99,8 @@ public final class MovecraftOverheat extends JavaPlugin {
                     if (str.equalsIgnoreCase(d.getDisasterName())) {
                         Map<String, Object> disasterData = ((ConfigurationSection)tempMap.get(str)).getValues(false);
                         d.setHeatThreshold((Double)disasterData.getOrDefault("HeatThreshold", 0d));
-                        d.setRandomChance((Double)disasterData.getOrDefault("RandomChance", 0d));
+                        d.setBaseRandomChance((Double)disasterData.getOrDefault("RandomChance", 0d));
+                        d.setRandomChancePowerFactor((Double)disasterData.getOrDefault("RandomChancePowerFactor", 0.001));
                     }
                 }
             }

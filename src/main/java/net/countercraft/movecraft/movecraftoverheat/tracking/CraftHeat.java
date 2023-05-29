@@ -83,7 +83,7 @@ public class CraftHeat {
     public void checkDisasters () {
         for (DisasterType type : MovecraftOverheat.getDisasterTypes()) {
             if (type.getHeatThreshold() * heatCapacity > heat) continue;
-            if (type.getRandomChance() < Math.random()) continue;
+            if (1-((1-type.getRandomChance()) * (Math.exp(-1 * type.getRandomChancePowerFactor() * (heat-type.getHeatThreshold())))) < Math.random()) continue;
             MovecraftOverheat.getInstance().getHeatManager().addDisaster(type.createNew(this));
             lastDisaster = System.currentTimeMillis();
         }
