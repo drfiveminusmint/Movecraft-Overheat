@@ -64,4 +64,4 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: Movecraft-Overheat_Dev-Build
-        path: staging/movecraft-overheat_*.jar
+        path: staging/Movecraft-Overheat_*.jar
