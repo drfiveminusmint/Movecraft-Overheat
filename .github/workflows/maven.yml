@@ -57,9 +57,9 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Stage jar
-      run: mkdir staging && cp movecraft-overheat/target/movecraft-overheat*.jar staging
+      run: mkdir staging && cp movecraft-overheat/target/Movecraft-Overheat*.jar staging
     - name: Rename jar
-      run: mv staging/movecraft-overheat*.jar staging/movecraft-overheat_$GITHUB_SHA.jar
+      run: mv staging/Movecraft-Overheat*.jar staging/Movecraft-Overheat_$GITHUB_SHA.jar
     - name: Upload jar
       uses: actions/upload-artifact@v3
       with:
