@@ -19,6 +19,7 @@ public class HeatManager extends BukkitRunnable {
     public void run() {
         long time = System.currentTimeMillis();
         for (CraftHeat heat : heatTracking.values()) {
+            if (heat.hasFiredThisTick()) heat.setFiredThisTick(false);
             if (heat.getLastUpdate() + Settings.HeatCheckInterval >= time) {
                 continue;
             }

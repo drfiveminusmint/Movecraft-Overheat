@@ -2,7 +2,6 @@ package net.countercraft.movecraft.movecraftoverheat;
 
 import net.countercraft.movecraft.craft.Craft;
 import net.countercraft.movecraft.craft.CraftManager;
-import net.countercraft.movecraft.craft.PlayerCraft;
 import net.countercraft.movecraft.craft.type.CraftType;
 import net.countercraft.movecraft.movecraftoverheat.tracking.CraftHeat;
 import net.countercraft.movecraft.util.ChatUtils;
