@@ -73,20 +73,27 @@
                 <enabled>true</enabled>
             </snapshots>
         </repository>
+        <repository>
+            <id>papermc</id>
+            <url>https://repo.papermc.io/repository/maven-public/</url>
+        </repository>
     </repositories>
 
     <dependencies>
+        <!--PaperMC-->
         <dependency>
-            <groupId>org.spigotmc</groupId>
-            <artifactId>spigot-api</artifactId>
-            <version>1.14.4-R0.1-SNAPSHOT</version>
+            <groupId>io.papermc.paper</groupId>
+            <artifactId>paper-api</artifactId>
+            <version>1.18.2-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
+        <!--Movecraft-->
         <dependency>
             <groupId>net.countercraft</groupId>
             <artifactId>movecraft</artifactId>
             <version>LATEST</version>
-            <scope>provided</scope>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/../Movecraft/Movecraft/build/libs/Movecraft-all.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>net.countercraft.movecraft.combat</groupId>
@@ -95,5 +102,10 @@
             <scope>system</scope>
             <systemPath>${project.basedir}/../Movecraft-Combat/target/Movecraft-Combat.jar</systemPath>
         </dependency>
+        <dependency>
+        <groupId>org.jetbrains</groupId>
+        <artifactId>annotations-java5</artifactId>
+        <version>23.1.0</version>
+    </dependency>
     </dependencies>
 </project>
