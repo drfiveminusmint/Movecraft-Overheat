@@ -22,6 +22,8 @@ public class CraftHeat {
     private long lastUpdate;
     private long lastDisaster;
     private boolean silenced;
+
+    private boolean firedThisTick;
     private final BossBar bossBar;
 
     public CraftHeat (@NotNull Craft c) {
@@ -122,7 +124,7 @@ public class CraftHeat {
         return lastDisaster;
     }
 
-    public boolean getIsSilenced () {
+    public boolean isSilenced() {
         return silenced;
     }
 
@@ -142,4 +144,9 @@ public class CraftHeat {
     public void removeBossBar () {
         bossBar.removeAll();
     }
+
+    public boolean hasFiredThisTick () {return firedThisTick;}
+
+    public void setFiredThisTick (boolean b) {firedThisTick = b;}
+
 }

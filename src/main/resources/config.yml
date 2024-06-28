@@ -15,8 +15,8 @@ HeatPerGunShot: 30.0
 HeatSinkBlocks:
     gold_block: 10.0
 
-#Similar to Heat Sink Blocks, but for heat dissapation instead
-#Each block of these materials will contribute [multiplier] times as much to the craft's heat dissapation
+#Similar to Heat Sink Blocks, but for heat dissipation instead
+#Each block of these materials will contribute [multiplier] times as much to the craft's heat dissipation
 RadiatorBlocks:
     lapis_block: 10.0
 
@@ -38,6 +38,10 @@ Disasters:
         HeatThreshold: 1.5
         RandomChance: 0.3
         RandomChancePowerFactor: 0.001
+
+# Prevent crafts above a certain heat threshold from firing weapons
+SilenceOverheatedCrafts: true
+SilenceHeatThreshold: 2.0
 
 #Enable/disable debug mode (CURRENTLY UNIMPLEMENTED)
 DebugMode: false
