@@ -28,7 +28,7 @@ jobs:
     - name: Checkout Movecraft-Combat
       uses: actions/checkout@v2
       with:
-        repository: 'TylerS1066/Movecraft-Combat'
+        repository: 'APDevTeam/Movecraft-Combat'
         path: Movecraft-Combat
         ref: main
     - name: Set up JDK 17
