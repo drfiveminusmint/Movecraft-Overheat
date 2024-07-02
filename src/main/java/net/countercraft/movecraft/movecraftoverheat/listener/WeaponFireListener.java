@@ -26,6 +26,7 @@ public class WeaponFireListener implements Listener {
     @EventHandler (priority = EventPriority.HIGHEST)
     public void onWeaponFire (CraftFireWeaponEvent event) {
         Craft craft = event.getCraft();
+        if (craft == null) return;
         CraftHeat craftHeat = MovecraftOverheat.getInstance().getHeatManager().getHeat(craft);
         if (craftHeat == null) {
             return;
@@ -52,6 +53,7 @@ public class WeaponFireListener implements Listener {
     @EventHandler (priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onBlockDispense (BlockDispenseEvent event) {
         Craft craft = MathUtils.fastNearestCraftToLoc(CraftManager.getInstance().getCrafts(), event.getBlock().getLocation());
+        if (craft == null) return;
         CraftHeat heat = MovecraftOverheat.getInstance().getHeatManager().getHeat(craft);
         if (heat != null) {
             if (heat.isSilenced() && craft.getHitBox().contains(MathUtils.bukkit2MovecraftLoc(event.getBlock().getLocation()))) {
@@ -69,6 +71,7 @@ public class WeaponFireListener implements Listener {
         Location location = event.getLocation();
         if (!(location.getBlock().isLiquid())) return;
         Craft craft = MathUtils.fastNearestCraftToLoc(CraftManager.getInstance().getCrafts(), location);
+        if (craft == null) return;
         // Check if the location is within the craft's hitbox
 
         if (!craft.getHitBox().contains(new MovecraftLocation(location.getBlockX(), location.getBlockY(), location.getBlockZ())))
