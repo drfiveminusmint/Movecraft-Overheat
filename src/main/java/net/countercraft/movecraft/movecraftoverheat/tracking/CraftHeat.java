@@ -147,7 +147,7 @@ public class CraftHeat {
     }
 
     private void updateBossBar () {
-        bossBar.setTitle("Heat :" + Math.round(heat*10)/10d + " / " + heatCapacity);
+        bossBar.setTitle("Heat: " + Math.round(heat*10)/10d + " / " + heatCapacity);
         if (heat >= heatCapacity*1.5) {
             bossBar.setColor(BarColor.RED);
         } else if (heat >= heatCapacity) {
