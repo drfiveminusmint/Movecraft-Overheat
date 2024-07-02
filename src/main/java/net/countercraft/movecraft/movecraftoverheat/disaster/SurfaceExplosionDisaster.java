@@ -47,9 +47,9 @@ public class SurfaceExplosionDisaster implements Disaster {
             currentBombs++;
         }
         if (currentBombs > 0) {
-            craft.getAudience().playSound(Sound.sound(Key.key("entity.wither.shoot"), Sound.Source.BLOCK, 5.0f, 5.0f));
+            craft.getAudience().playSound(Sound.sound(Key.key("entity.wither.shoot"), Sound.Source.BLOCK, 9.0f, 3.0f));
             if (craft instanceof PlayerCraft) {
-                ((PlayerCraft) craft).getPilot().sendMessage(ChatUtils.MOVECRAFT_COMMAND_PREFIX + ChatColor.RED+ " Your craft has overheated and suffered an explosion!");
+                ((PlayerCraft) craft).getPilot().sendMessage(ChatUtils.MOVECRAFT_COMMAND_PREFIX + ChatColor.RED+ "Your craft has overheated and suffered an explosion!");
             }
         }
     }

@@ -15,4 +15,7 @@ public class Settings {
     public static boolean DebugMode;
     public static Map<Material, Double> RadiatorBlocks = new HashMap<>();
     public static Map<Material, Double> HeatSinkBlocks = new HashMap<>();
+
+    public static boolean SilenceOverheatedCrafts = false;
+    public static double SilenceHeatThreshold = 2.0;
 }

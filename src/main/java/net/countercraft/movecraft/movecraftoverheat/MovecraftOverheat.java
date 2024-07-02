@@ -8,12 +8,14 @@ import net.countercraft.movecraft.movecraftoverheat.disaster.SurfaceFireType;
 import net.countercraft.movecraft.movecraftoverheat.listener.CraftPilotListener;
 import net.countercraft.movecraft.movecraftoverheat.listener.WeaponFireListener;
 import net.countercraft.movecraft.movecraftoverheat.tracking.HeatManager;
+import net.countercraft.movecraft.util.Tags;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 
 public final class MovecraftOverheat extends JavaPlugin {
@@ -57,30 +59,38 @@ public final class MovecraftOverheat extends JavaPlugin {
         Settings.DebugMode = getConfig().getBoolean("DebugMode", false);
         Settings.HeatCheckInterval = getConfig().getInt("HeatCheckInterval", 1000);
         Settings.DisasterCheckInterval = getConfig().getInt("DisasterCheckInterval", 10000);
+        Settings.SilenceOverheatedCrafts = getConfig().getBoolean("SilenceOverheatedCrafts", false);
+        Settings.SilenceHeatThreshold = getConfig().getDouble("SilenceHeatThreshold", 2.0);
         if (getConfig().contains("HeatSinkBlocks")) {
             Map<String,Object> tempMap = getConfig().getConfigurationSection("HeatSinkBlocks").getValues(false);
             for(String str : tempMap.keySet()) {
-                Material type;
+                double value;
                 try {
-                    type = Material.getMaterial(str);
+                    value = (Double)tempMap.get(str);
+                } catch (ClassCastException ex) {
+                    MovecraftOverheat.getInstance().getLogger().severe("Failed to load HeatSinkBlock " + str);
+                    continue;
                 }
-                catch(NumberFormatException e) {
-                    type = Material.getMaterial(str);
+                var tagged = Tags.parseMaterials(str);
+                for (Material m : tagged) {
+                    Settings.HeatSinkBlocks.put(m, value);
                 }
-                Settings.HeatSinkBlocks.put(type,(Double)tempMap.get(str));
             }
         }
         if (getConfig().contains("RadiatorBlocks")) {
             Map<String,Object> tempMap = getConfig().getConfigurationSection("RadiatorBlocks").getValues(false);
-            for(String str : tempMap.keySet()) {
-                Material type;
+            for (String str : tempMap.keySet()) {
+                double value;
                 try {
-                    type = Material.getMaterial(str);
+                    value = (Double)tempMap.get(str);
+                } catch (ClassCastException ex) {
+                    MovecraftOverheat.getInstance().getLogger().severe("Failed to load RadiatorBlock " + str);
+                    continue;
                 }
-                catch(NumberFormatException e) {
-                    type = Material.getMaterial(str);
+                var tagged = Tags.parseMaterials(str);
+                for (Material m : tagged) {
+                    Settings.RadiatorBlocks.put(m, value);
                 }
-                Settings.RadiatorBlocks.put(type,(Double)tempMap.get(str));
             }
         }
 
@@ -106,7 +116,7 @@ public final class MovecraftOverheat extends JavaPlugin {
             }
         }
 
-        manager.runTaskTimer(this, 20, 4);
+        manager.runTaskTimer(this, 20, 1);
     }
 
 

@@ -11,16 +11,19 @@ import net.countercraft.movecraft.movecraftoverheat.MovecraftOverheat;
 import net.countercraft.movecraft.movecraftoverheat.config.Settings;
 import net.countercraft.movecraft.movecraftoverheat.tracking.CraftHeat;
 import net.countercraft.movecraft.util.MathUtils;
+import net.kyori.adventure.key.Key;
+import net.kyori.adventure.sound.Sound;
 import org.bukkit.Location;
-import org.bukkit.Material;
+
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockDispenseEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 
 public class WeaponFireListener implements Listener {
 
-    @EventHandler (priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler (priority = EventPriority.HIGHEST)
     public void onWeaponFire (CraftFireWeaponEvent event) {
         Craft craft = event.getCraft();
         CraftHeat craftHeat = MovecraftOverheat.getInstance().getHeatManager().getHeat(craft);
@@ -43,6 +46,18 @@ public class WeaponFireListener implements Listener {
                 multiplier = 1.0;
             }
             craftHeat.addHeat(Settings.HeatPerTNT*multiplier);
+        }
+    }
+
+    @EventHandler (priority = EventPriority.HIGH, ignoreCancelled = true)
+    public void onBlockDispense (BlockDispenseEvent event) {
+        Craft craft = MathUtils.fastNearestCraftToLoc(CraftManager.getInstance().getCrafts(), event.getBlock().getLocation());
+        CraftHeat heat = MovecraftOverheat.getInstance().getHeatManager().getHeat(craft);
+        if (heat != null) {
+            if (heat.isSilenced() && craft.getHitBox().contains(MathUtils.bukkit2MovecraftLoc(event.getBlock().getLocation()))) {
+                event.setCancelled(true);
+                craft.getAudience().playSound(Sound.sound(Key.key("block.dispenser.fail"), Sound.Source.BLOCK, 1f, 1f));
+            }
         }
     }
 

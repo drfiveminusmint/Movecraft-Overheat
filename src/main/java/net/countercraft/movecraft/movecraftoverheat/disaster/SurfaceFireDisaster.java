@@ -52,7 +52,7 @@ public class SurfaceFireDisaster implements Disaster {
         if (currentFires > 0) {
             craft.getAudience().playSound(Sound.sound(Key.key("item.firecharge.use"), Sound.Source.BLOCK, 5.0f, 5.0f));
             if (craft instanceof PlayerCraft) {
-                ((PlayerCraft) craft).getPilot().sendMessage(ChatUtils.MOVECRAFT_COMMAND_PREFIX + ChatColor.RED+ " The heat of your craft has set it ablaze!");
+                ((PlayerCraft) craft).getPilot().sendMessage(ChatUtils.MOVECRAFT_COMMAND_PREFIX + ChatColor.RED+ "The heat of your craft has set it ablaze!");
             }
         }
     }

@@ -7,7 +7,12 @@ import net.countercraft.movecraft.movecraftoverheat.Keys;
 import net.countercraft.movecraft.movecraftoverheat.MovecraftOverheat;
 import net.countercraft.movecraft.movecraftoverheat.config.Settings;
 import net.countercraft.movecraft.movecraftoverheat.disaster.DisasterType;
+import net.countercraft.movecraft.util.ChatUtils;
+import net.kyori.adventure.key.Key;
+import net.kyori.adventure.sound.Sound;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
@@ -83,9 +88,22 @@ public class CraftHeat {
     }
 
     public void checkDisasters () {
+        // Update whether the craft is silenced
+        if (silenced) {
+            if (heat < heatCapacity * Settings.SilenceHeatThreshold) {
+                craft.getAudience().sendMessage(Component.text(ChatUtils.MOVECRAFT_COMMAND_PREFIX + "No longer silenced!"));
+                silenced = false;
+            }
+        } else {
+            if (Settings.SilenceOverheatedCrafts && heat > heatCapacity * Settings.SilenceHeatThreshold) {
+                craft.getAudience().sendMessage(Component.text(ChatUtils.MOVECRAFT_COMMAND_PREFIX + ChatColor.RED + "Silenced! Your guns are too hot to fire!"));
+                craft.getAudience().playSound(Sound.sound(Key.key("entity.blaze.death"), Sound.Source.BLOCK, 2.0f, 1.0f));
+                silenced = true;
+            }
+        }
         for (DisasterType type : MovecraftOverheat.getDisasterTypes()) {
             if (type.getHeatThreshold() * heatCapacity > heat) continue;
-            if (1-((1-type.getRandomChance()) * (Math.exp(-1 * type.getRandomChancePowerFactor() * (heat-type.getHeatThreshold())))) < Math.random()) continue;
+            if ((1-type.getRandomChance()) * (Math.exp(-1 * type.getRandomChancePowerFactor() * ((heat/heatCapacity)-type.getHeatThreshold()))) > Math.random()) continue;
             MovecraftOverheat.getInstance().getHeatManager().addDisaster(type.createNew(this));
             lastDisaster = System.currentTimeMillis();
         }
