@@ -15,6 +15,8 @@ import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
 import org.bukkit.Location;
 
+import org.bukkit.block.BlockState;
+import org.bukkit.block.data.Waterlogged;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -69,7 +71,12 @@ public class WeaponFireListener implements Listener {
         if (Settings.HeatPerGunShot <= 0) return;
         // Only detect explosions in ballistic water or lava for the purposes of catching cannon shots
         Location location = event.getLocation();
-        if (!(location.getBlock().isLiquid())) return;
+        // Detect waterlogged blocks
+        if (!location.getBlock().isLiquid()) {
+            BlockState state = location.getBlock().getState();
+            if (!(state instanceof Waterlogged)) return;
+            if (!((Waterlogged) state).isWaterlogged()) return;
+        }
         Craft craft = MathUtils.fastNearestCraftToLoc(CraftManager.getInstance().getCrafts(), location);
         if (craft == null) return;
         // Check if the location is within the craft's hitbox
