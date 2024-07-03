@@ -16,6 +16,7 @@ import net.kyori.adventure.sound.Sound;
 import org.bukkit.Location;
 
 import org.bukkit.block.BlockState;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Waterlogged;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -73,9 +74,9 @@ public class WeaponFireListener implements Listener {
         Location location = event.getLocation();
         // Detect waterlogged blocks
         if (!location.getBlock().isLiquid()) {
-            BlockState state = location.getBlock().getState();
-            if (!(state instanceof Waterlogged)) return;
-            if (!((Waterlogged) state).isWaterlogged()) return;
+            BlockData data = location.getBlock().getBlockData();
+            if (!(data instanceof Waterlogged)) return;
+            if (!((Waterlogged) data).isWaterlogged()) return;
         }
         Craft craft = MathUtils.fastNearestCraftToLoc(CraftManager.getInstance().getCrafts(), location);
         if (craft == null) return;
