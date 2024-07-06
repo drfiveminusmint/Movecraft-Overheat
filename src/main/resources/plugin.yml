@@ -1,5 +1,5 @@
 name: Movecraft-Overheat
-version: '${project.version}'
+version: '${projectVersion}'
 main: net.countercraft.movecraft.movecraftoverheat.MovecraftOverheat
 api-version: 1.14
 prefix: Movecraft-Overheat
