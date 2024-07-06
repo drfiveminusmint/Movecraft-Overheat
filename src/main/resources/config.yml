@@ -7,7 +7,7 @@ HeatPerFireball: 0.1
 #Amount of heat from a gun firing.
 #Multiple guns firing on the same game tick will trick the plugin into thinking they're one shot
 #So you may want to require players to space the shots on their ships out over multiple ticks
-HeatPerGunShot: 30.0
+HeatPerGunshot: 30.0
 
 #Heat Sink Blocks have a multiplier associated with them that modifies the amount of heat capacity they give compared to base blocks
 #For instance a block with a value of 10 will give 10 times as much heat capacity per block compared to a normal block
