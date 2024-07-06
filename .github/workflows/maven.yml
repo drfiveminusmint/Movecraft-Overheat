@@ -1,67 +1,58 @@
-# This workflow will build a Java project with Maven, and cache/restore any dependencies to improve the workflow execution time
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-maven
+name: Gradle CI
 
-# This workflow uses actions that are not certified by GitHub.
-# They are provided by a third-party and are governed by
-# separate terms of service, privacy policy, and support
-# documentation.
-
-name: Java CI with Maven
-
-on: 
+on:
   workflow_dispatch:
   push:
   pull_request:
-  schedule:
-    - cron: '22 14 * * 6'
+  release:
+    types: [created, prereleased]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
 
     steps:
-    - name: Checkout Movecraft-Overheat
-      uses: actions/checkout@v3
-      with:
-        path: movecraft-overheat
-    - name: Checkout Movecraft-Combat
-      uses: actions/checkout@v2
-      with:
-        repository: 'APDevTeam/Movecraft-Combat'
-        path: Movecraft-Combat
-        ref: main
-    - name: Set up JDK 17
-      uses: actions/setup-java@v3
-      with:
-        distribution: 'temurin'
-        java-version: '17'
-    - name: Cache Maven packages
-      id: cacheMain
-      uses: actions/cache@v3
-      with:
-        path: ~/.m2
-        key: ${{ runner.os }}-m2
-        restore-keys: ${{ runner.os }}-m2
+      - name: Checkout Movecraft-Overheat
+        uses: actions/checkout@v4
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          build-scan-publish: true
+          build-scan-terms-of-use-url: "https://gradle.com/terms-of-service"
+          build-scan-terms-of-use-agree: "yes"
 
-    # Build Movecraft-Combat
-    - name: Build Movecraft-Combat
-      run: mvn -B package -T 1C --file Movecraft-Combat/pom.xml
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build with Gradle
+        run: ./gradlew clean build --parallel
 
-    # Build Movecraft-Overheat
-    - name: Build Movecraft-Overheat
-      run: mvn -B package -T 1C --file movecraft-overheat/pom.xml
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Publish to GitHub Packages
+        if: ${{ github.event_name == 'release' }}
+        run: ./gradlew publish --parallel
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Stage jar
-      run: mkdir staging && cp movecraft-overheat/target/Movecraft-Overheat*.jar staging
-    - name: Rename jar
-      run: mv staging/Movecraft-Overheat*.jar staging/Movecraft-Overheat_$GITHUB_SHA.jar
-    - name: Upload jar
-      uses: actions/upload-artifact@v3
-      with:
-        name: Movecraft-Overheat_Dev-Build
-        path: staging/Movecraft-Overheat_*.jar
+      - name: Stage jar for Actions
+        if: ${{ github.event_name != 'release' }}
+        run: mkdir staging && cp build/libs/Movecraft-Overheat.jar staging && mv staging/Movecraft-Overheat.jar staging/Movecraft-Overheat_$GITHUB_SHA.jar
+      - name: Upload jar to Actions
+        if: ${{ github.event_name != 'release' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: Movecraft-Overheat_Dev-Build
+          path: staging/Movecraft-Overheat_*.jar
+
+      - name: Stage jar for Release
+        if: ${{ github.event_name == 'release' }}
+        run: mkdir staging && cp build/libs/Movecraft-Overheat.jar staging && mv staging/Movecraft-Overheat.jar staging/Movecraft-Overheat_${{ github.event.release.tag_name }}.jar
+      - name: Upload jar to Release
+        if: ${{ github.event_name == 'release' }}
+        uses: softprops/action-gh-release@v2
+        with:
+          files: staging/Movecraft-Overheat_${{ github.event.release.tag_name }}.jar
