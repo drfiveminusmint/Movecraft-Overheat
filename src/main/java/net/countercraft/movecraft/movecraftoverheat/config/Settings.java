@@ -8,7 +8,8 @@ import java.util.Map;
 public class Settings {
     public static double HeatPerTNT = 1.0;
     public static double HeatPerFireball = 0.05;
-    public static double HeatPerGunShot = 30;
+    public static double HeatPerGunshot = 30;
+    public static int ExplosionsPerGunshot = 4;
     public static int HeatCheckInterval = 1000;
     public static int DisasterCheckInterval = 10000;
 

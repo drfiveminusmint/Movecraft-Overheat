@@ -29,6 +29,7 @@ public class CraftHeat {
     private boolean silenced;
 
     private boolean firedThisTick;
+    private int explosionsThisTick;
     private final BossBar bossBar;
 
     public CraftHeat (@NotNull Craft c) {
@@ -163,8 +164,15 @@ public class CraftHeat {
         bossBar.removeAll();
     }
 
-    public boolean hasFiredThisTick () {return firedThisTick;}
+    public void reportExplosion() {
+        if (++explosionsThisTick >= Settings.ExplosionsPerGunshot && !firedThisTick) {
+            addHeat(Settings.HeatPerGunshot);
+            firedThisTick = true;
+        }
+    }
 
-    public void setFiredThisTick (boolean b) {firedThisTick = b;}
-
+    public void resetGunshotDetection() {
+        firedThisTick = false;
+        explosionsThisTick = 0;
+    }
 }

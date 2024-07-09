@@ -15,7 +15,6 @@ import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
 import org.bukkit.Location;
 
-import org.bukkit.block.BlockState;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Waterlogged;
 import org.bukkit.event.EventHandler;
@@ -69,7 +68,7 @@ public class WeaponFireListener implements Listener {
     @EventHandler (priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onEntityExplode (EntityExplodeEvent event) {
         // Don't run this check if there's no per shot heat cost
-        if (Settings.HeatPerGunShot <= 0) return;
+        if (Settings.HeatPerGunshot <= 0) return;
         // Only detect explosions in ballistic water or lava for the purposes of catching cannon shots
         Location location = event.getLocation();
         // Detect waterlogged blocks
@@ -88,9 +87,7 @@ public class WeaponFireListener implements Listener {
         if (craftHeat == null) {
             return;
         }
-        if (!craftHeat.hasFiredThisTick()) {
-            craftHeat.setFiredThisTick(true);
-            craftHeat.addHeat(Settings.HeatPerGunShot);
-        }
+        // Report an explosion occurring in liquid
+        craftHeat.reportExplosion();
     }
 }
