@@ -55,6 +55,7 @@ public final class MovecraftOverheat extends JavaPlugin {
         Settings.HeatPerTNT = getConfig().getDouble("HeatPerTNT", 1.0);
         Settings.HeatPerFireball = getConfig().getDouble("HeatPerFireball", 0.05);
         Settings.HeatPerGunshot = getConfig().getDouble("HeatPerGunshot", 30);
+        Settings.ExplosionsPerGunshot = getConfig().getInt("ExplosionsPerGunshot", 4);
         Settings.DebugMode = getConfig().getBoolean("DebugMode", false);
         Settings.HeatCheckInterval = getConfig().getInt("HeatCheckInterval", 1000);
         Settings.DisasterCheckInterval = getConfig().getInt("DisasterCheckInterval", 10000);
