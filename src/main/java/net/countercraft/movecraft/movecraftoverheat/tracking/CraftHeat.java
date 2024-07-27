@@ -27,10 +27,10 @@ public class CraftHeat {
     public static final CraftDataTagKey<Double> HEAT_CAPACITY = CraftDataTagContainer.tryRegisterTagKey(new NamespacedKey("movecraft-overheat", "heat-capacity"), craft -> 0D);
     public static final CraftDataTagKey<Double> HEAT = CraftDataTagContainer.tryRegisterTagKey(new NamespacedKey("movecraft-overheat", "heat"), craft -> 0D);
     public static final CraftDataTagKey<Double> DISSIPATION = CraftDataTagContainer.tryRegisterTagKey(new NamespacedKey("movecraft-overheat", "dissipation"), craft -> 0D);
+    public static final CraftDataTagKey<Boolean> SILENCED = CraftDataTagContainer.tryRegisterTagKey(new NamespacedKey("movecraft-overheat", "silenced"), craft -> false);
     private final Craft craft;
     private long lastUpdate;
     private long lastDisaster;
-    private boolean silenced;
 
     private boolean firedThisTick;
     private int explosionsThisTick;
@@ -94,16 +94,16 @@ public class CraftHeat {
 
     public void checkDisasters () {
         // Update whether the craft is silenced
-        if (silenced) {
+        if (craft.getDataTag(SILENCED)) {
             if (craft.getDataTag(HEAT) < craft.getDataTag(HEAT_CAPACITY) * Settings.SilenceHeatThreshold) {
                 craft.getAudience().sendMessage(Component.text(ChatUtils.MOVECRAFT_COMMAND_PREFIX + "No longer silenced!"));
-                silenced = false;
+                craft.setDataTag(SILENCED, false);
             }
         } else {
             if (Settings.SilenceOverheatedCrafts && craft.getDataTag(HEAT) > craft.getDataTag(HEAT_CAPACITY) * Settings.SilenceHeatThreshold) {
                 craft.getAudience().sendMessage(Component.text(ChatUtils.MOVECRAFT_COMMAND_PREFIX + ChatColor.RED + "Silenced! Your guns are too hot to fire!"));
                 craft.getAudience().playSound(Sound.sound(Key.key("entity.blaze.death"), Sound.Source.BLOCK, 2.0f, 1.0f));
-                silenced = true;
+                craft.setDataTag(SILENCED, true);
             }
         }
         for (DisasterType type : MovecraftOverheat.getDisasterTypes()) {
@@ -135,10 +135,6 @@ public class CraftHeat {
 
     public long getLastDisaster() {
         return lastDisaster;
-    }
-
-    public boolean isSilenced() {
-        return silenced;
     }
 
     private void updateBossBar() {
