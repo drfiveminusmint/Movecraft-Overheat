@@ -3,6 +3,8 @@ package net.countercraft.movecraft.movecraftoverheat.tracking;
 import net.countercraft.movecraft.MovecraftLocation;
 import net.countercraft.movecraft.craft.Craft;
 import net.countercraft.movecraft.craft.PlayerCraft;
+import net.countercraft.movecraft.craft.datatag.CraftDataTagContainer;
+import net.countercraft.movecraft.craft.datatag.CraftDataTagKey;
 import net.countercraft.movecraft.movecraftoverheat.Keys;
 import net.countercraft.movecraft.movecraftoverheat.MovecraftOverheat;
 import net.countercraft.movecraft.movecraftoverheat.config.Settings;
@@ -14,14 +16,15 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
 import org.jetbrains.annotations.NotNull;
 
 public class CraftHeat {
+    public static final CraftDataTagKey<Double> HEAT_CAPACITY = CraftDataTagContainer.tryRegisterTagKey(new NamespacedKey("movecraft-overheat", "heat-capacity"), craft -> 0D);
     private final Craft craft;
-    private double heatCapacity;
     private double heat;
     private double dissipation;
     private long lastUpdate;
@@ -35,7 +38,7 @@ public class CraftHeat {
     public CraftHeat (@NotNull Craft c) {
         this.craft = c;
         this.heat = 0;
-        this.bossBar = Bukkit.createBossBar("Heat: " + this.heat + " / " + this.heatCapacity, BarColor.GREEN, BarStyle.SEGMENTED_6);
+        this.bossBar = Bukkit.createBossBar("Heat", BarColor.GREEN, BarStyle.SEGMENTED_6);
         this.recalculate();
         if (craft instanceof PlayerCraft) {
             this.bossBar.addPlayer(((PlayerCraft) this.craft).getPilot());
@@ -71,9 +74,9 @@ public class CraftHeat {
         newCapacity = Math.round(newCapacity);
 
         if (Math.abs(heat) >= 0.01) {
-            heat *= newCapacity/heatCapacity;
+            heat *= newCapacity / craft.getDataTag(HEAT_CAPACITY);
         }
-        heatCapacity = newCapacity;
+        craft.setDataTag(HEAT_CAPACITY, newCapacity);
         dissipation = newDissipation;
 
         updateBossBar();
@@ -91,20 +94,20 @@ public class CraftHeat {
     public void checkDisasters () {
         // Update whether the craft is silenced
         if (silenced) {
-            if (heat < heatCapacity * Settings.SilenceHeatThreshold) {
+            if (heat < craft.getDataTag(HEAT_CAPACITY) * Settings.SilenceHeatThreshold) {
                 craft.getAudience().sendMessage(Component.text(ChatUtils.MOVECRAFT_COMMAND_PREFIX + "No longer silenced!"));
                 silenced = false;
             }
         } else {
-            if (Settings.SilenceOverheatedCrafts && heat > heatCapacity * Settings.SilenceHeatThreshold) {
+            if (Settings.SilenceOverheatedCrafts && heat > craft.getDataTag(HEAT_CAPACITY) * Settings.SilenceHeatThreshold) {
                 craft.getAudience().sendMessage(Component.text(ChatUtils.MOVECRAFT_COMMAND_PREFIX + ChatColor.RED + "Silenced! Your guns are too hot to fire!"));
                 craft.getAudience().playSound(Sound.sound(Key.key("entity.blaze.death"), Sound.Source.BLOCK, 2.0f, 1.0f));
                 silenced = true;
             }
         }
         for (DisasterType type : MovecraftOverheat.getDisasterTypes()) {
-            if (type.getHeatThreshold() * heatCapacity > heat) continue;
-            if ((1-type.getRandomChance()) * (Math.exp(-1 * type.getRandomChancePowerFactor() * ((heat/heatCapacity)-type.getHeatThreshold()))) > Math.random()) continue;
+            if (type.getHeatThreshold() * craft.getDataTag(HEAT_CAPACITY) > heat) continue;
+            if ((1-type.getRandomChance()) * (Math.exp(-1 * type.getRandomChancePowerFactor() * ((heat/craft.getDataTag(HEAT_CAPACITY))-type.getHeatThreshold()))) > Math.random()) continue;
             MovecraftOverheat.getInstance().getHeatManager().addDisaster(type.createNew(this));
             lastDisaster = System.currentTimeMillis();
         }
@@ -126,10 +129,6 @@ public class CraftHeat {
         return heat;
     }
 
-    public double getHeatCapacity() {
-        return heatCapacity;
-    }
-
     public double getDissipation() {
         return dissipation;
     }
@@ -147,16 +146,16 @@ public class CraftHeat {
         return silenced;
     }
 
-    private void updateBossBar () {
-        bossBar.setTitle("Heat: " + Math.round(heat*10)/10d + " / " + heatCapacity);
-        if (heat >= heatCapacity*1.5) {
+    private void updateBossBar() {
+        bossBar.setTitle("Heat: " + Math.round(heat*10)/10d + " / " + craft.getDataTag(HEAT_CAPACITY));
+        if (heat >= craft.getDataTag(HEAT_CAPACITY)*1.5) {
             bossBar.setColor(BarColor.RED);
-        } else if (heat >= heatCapacity) {
+        } else if (heat >= craft.getDataTag(HEAT_CAPACITY)) {
             bossBar.setColor(BarColor.YELLOW);
         } else {
             bossBar.setColor(BarColor.GREEN);
         }
-        bossBar.setProgress(Math.min(1.0, heat/heatCapacity));
+        bossBar.setProgress(Math.min(1.0, heat / craft.getDataTag(HEAT_CAPACITY)));
         bossBar.setVisible(heat != 0.0);
     }
 
