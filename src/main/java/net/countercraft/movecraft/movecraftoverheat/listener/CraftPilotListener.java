@@ -9,30 +9,29 @@ import net.countercraft.movecraft.movecraftoverheat.MovecraftOverheat;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.jetbrains.annotations.NotNull;
 
 public class CraftPilotListener implements Listener {
-    @EventHandler(priority = EventPriority.LOW)
-    public void onCraftPilot (CraftDetectEvent event) {
-        if (!(event.getCraft() instanceof PlayerCraft) | event.isCancelled()) {
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOW)
+    public void onCraftPilot(@NotNull CraftDetectEvent event) {
+        if (!(event.getCraft() instanceof PlayerCraft) || !event.getCraft().getType().getBoolProperty(Keys.USE_HEAT))
             return;
-        }
-        if (event.getCraft().getType().getBoolProperty(Keys.USE_HEAT)) {
-            MovecraftOverheat.getInstance().getHeatManager().registerCraft(event.getCraft());
-        }
+
+        MovecraftOverheat.getInstance().getHeatManager().registerCraft(event.getCraft());
     }
 
-    @EventHandler(priority = EventPriority.LOW)
-    public void onCraftRelease (CraftReleaseEvent event) {
-        if(!(event.getCraft() instanceof PlayerCraft) | (event.isCancelled() | MovecraftOverheat.getInstance().getHeatManager().getHeat(event.getCraft())==null)) {
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOW)
+    public void onCraftRelease(@NotNull CraftReleaseEvent event) {
+        if(!(event.getCraft() instanceof PlayerCraft) || (MovecraftOverheat.getInstance().getHeatManager().getHeat(event.getCraft()) == null)) {
             return;
         }
         MovecraftOverheat.getInstance().getHeatManager().getHeat(event.getCraft()).removeBossBar();
         MovecraftOverheat.getInstance().getHeatManager().removeCraft(event.getCraft());
     }
 
-    @EventHandler
-    public void onCraftSink (CraftSinkEvent event) {
-        if(!(event.getCraft() instanceof PlayerCraft) | (event.isCancelled() | MovecraftOverheat.getInstance().getHeatManager().getHeat(event.getCraft())==null)) {
+    @EventHandler(ignoreCancelled = true)
+    public void onCraftSink(@NotNull CraftSinkEvent event) {
+        if(!(event.getCraft() instanceof PlayerCraft) || (MovecraftOverheat.getInstance().getHeatManager().getHeat(event.getCraft()) == null)) {
             return;
         }
         MovecraftOverheat.getInstance().getHeatManager().getHeat(event.getCraft()).removeBossBar();
