@@ -36,16 +36,16 @@ public final class MovecraftOverheat extends JavaPlugin {
 
         if (!MovecraftCombat.getInstance().getConfig().getBoolean("EnableTNTTracking")) {
             getLogger().log(Level.SEVERE, "[ERROR] Movecraft-Overheat requires TNTTracking to be enabled in Movecraft-Combat. Disabling...");
-            setEnabled(false);
+            this.setEnabled(false);
             return;
         }
         if (!MovecraftCombat.getInstance().getConfig().getBoolean("EnableFireballTracking")) {
             getLogger().log(Level.SEVERE, "[ERROR] Movecraft-Overheat requires FireballTracking to be enabled in Movecraft-Combat. Disabling...");
-            setEnabled(false);
+            this.setEnabled(false);
             return;
         }
 
-        manager = new HeatManager();
+        this.manager = new HeatManager();
 
         getCommand("movecraftoverheat").setExecutor(new MovecraftOverheatCommand());
 
@@ -120,19 +120,24 @@ public final class MovecraftOverheat extends JavaPlugin {
         getServer().getPluginManager().registerEvents(manager, this);
     }
 
+
+    @Override
+    public void onDisable() {
+        // Plugin shutdown logic
+    }
+
     public static void addDisasterType(DisasterType d) {
         disasterTypes.add(d);
     }
-
     public HeatManager getHeatManager() {
         return manager;
     }
 
-    public static MovecraftOverheat getInstance() {
+    public static MovecraftOverheat getInstance () {
         return instance;
     }
 
-    public static HashSet<DisasterType> getDisasterTypes() {
+    public static HashSet<DisasterType> getDisasterTypes () {
         return disasterTypes;
     }
 }

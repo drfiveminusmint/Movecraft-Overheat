@@ -63,7 +63,6 @@ public class CraftHeat {
             } else {
                 newDissipation += dPerBlock * materials.get(m);
             }
-
         }
 
         if (newCapacity <= 1.0) {

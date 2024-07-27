@@ -18,7 +18,7 @@ import java.util.logging.Level;
 
 public class HeatManager extends BukkitRunnable implements Listener {
     private final HashMap<Craft, CraftHeat> heatTracking = new HashMap<>();
-    private final Queue<Disaster> disasterQueue = new ConcurrentLinkedQueue<>();
+    private final Queue<Disaster> disasterQueue = new ConcurrentLinkedQueue();
 
     @Override
     public void run() {
