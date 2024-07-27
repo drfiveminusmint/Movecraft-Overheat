@@ -77,7 +77,7 @@ public class MovecraftOverheatCommand implements CommandExecutor {
             return true;
         }
         sender.sendMessage(ChatUtils.MOVECRAFT_COMMAND_PREFIX + " Checking craft of type " + c.getType().getStringProperty(CraftType.NAME) + " commanded by " + player.getDisplayName() + ":");
-        sender.sendMessage("Current Heat: " + craftHeat.getHeat());
+        sender.sendMessage("Current Heat: " + craftHeat.getCraft().getDataTag(CraftHeat.HEAT));
         sender.sendMessage("Capacity: " + craftHeat.getCraft().getDataTag(CraftHeat.HEAT_CAPACITY));
         sender.sendMessage("Dissipation / second: " + craftHeat.getDissipation());
         return true;
