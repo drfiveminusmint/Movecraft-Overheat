@@ -25,8 +25,8 @@ import org.jetbrains.annotations.NotNull;
 public class CraftHeat {
     public static final CraftDataTagKey<Double> HEAT_CAPACITY = CraftDataTagContainer.tryRegisterTagKey(new NamespacedKey("movecraft-overheat", "heat-capacity"), craft -> 0D);
     public static final CraftDataTagKey<Double> HEAT = CraftDataTagContainer.tryRegisterTagKey(new NamespacedKey("movecraft-overheat", "heat"), craft -> 0D);
+    public static final CraftDataTagKey<Double> DISSIPATION = CraftDataTagContainer.tryRegisterTagKey(new NamespacedKey("movecraft-overheat", "dissipation"), craft -> 0D);
     private final Craft craft;
-    private double dissipation;
     private long lastUpdate;
     private long lastDisaster;
     private boolean silenced;
@@ -78,7 +78,7 @@ public class CraftHeat {
             craft.setDataTag(HEAT, heat);
         }
         craft.setDataTag(HEAT_CAPACITY, newCapacity);
-        dissipation = newDissipation;
+        craft.setDataTag(DISSIPATION, newDissipation);
 
         updateBossBar();
     }
@@ -86,7 +86,7 @@ public class CraftHeat {
     public void processDissipation () {
         double heat = craft.getDataTag(HEAT);
         if (heat > 0.0) {
-            heat -= dissipation;
+            heat -= craft.getDataTag(DISSIPATION);
         }
         if (heat < 0.0) {
             heat = 0.0;
@@ -126,10 +126,6 @@ public class CraftHeat {
 
     public void setLastUpdate(long l) {
         lastUpdate = l;
-    }
-
-    public double getDissipation() {
-        return dissipation;
     }
 
     public void addHeat (double heatToAdd) {
