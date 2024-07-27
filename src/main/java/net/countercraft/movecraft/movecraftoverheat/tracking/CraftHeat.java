@@ -10,6 +10,7 @@ import net.countercraft.movecraft.movecraftoverheat.MovecraftOverheat;
 import net.countercraft.movecraft.movecraftoverheat.config.Settings;
 import net.countercraft.movecraft.movecraftoverheat.disaster.DisasterType;
 import net.countercraft.movecraft.util.ChatUtils;
+import net.countercraft.movecraft.util.Counter;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
@@ -50,21 +51,19 @@ public class CraftHeat {
         double cPerBlock = craft.getType().getDoubleProperty(Keys.HEAT_CAPACITY_PER_BLOCK);
         double dPerBlock = craft.getType().getDoubleProperty(Keys.HEAT_DISSIPATION_PER_BLOCK);
 
-        for (MovecraftLocation location : craft.getHitBox()) {
-            Material type = craft.getWorld().getBlockAt(location.getX(), location.getY(), location.getZ()).getType();
-            if (type == Material.AIR || type == Material.CAVE_AIR || type == Material.FIRE) {
-                continue;
-            }
-            if (Settings.HeatSinkBlocks.containsKey(type)) {
-                newCapacity += Settings.HeatSinkBlocks.get(type) * cPerBlock;
+        Counter<Material> materials = craft.getDataTag(Craft.MATERIALS);
+        for (Material m : materials.getKeySet()) {
+            if (Settings.HeatSinkBlocks.containsKey(m)) {
+                newCapacity += Settings.HeatSinkBlocks.get(m) * cPerBlock * materials.get(m);
             } else {
-                newCapacity += cPerBlock;
+                newCapacity += cPerBlock * materials.get(m);
             }
-            if (Settings.RadiatorBlocks.containsKey(type)) {
-                newDissipation += Settings.RadiatorBlocks.get(type) * dPerBlock;
+            if (Settings.RadiatorBlocks.containsKey(m)) {
+                newDissipation += Settings.RadiatorBlocks.get(m) * dPerBlock * materials.get(m);
             } else {
-                newDissipation += dPerBlock;
+                newDissipation += dPerBlock * materials.get(m);
             }
+
         }
 
         if (newCapacity <= 1.0) {
@@ -116,7 +115,7 @@ public class CraftHeat {
         }
     }
 
-    public Craft getCraft () {
+    public Craft getCraft() {
         return craft;
     }
 
