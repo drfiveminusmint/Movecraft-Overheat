@@ -38,7 +38,7 @@ public class CraftHeat {
     public CraftHeat (@NotNull Craft c) {
         this.craft = c;
         this.bossBar = Bukkit.createBossBar("Heat", BarColor.GREEN, BarStyle.SEGMENTED_6);
-        this.recalculate();
+        bossBar.setVisible(false);
         if (craft instanceof PlayerCraft) {
             this.bossBar.addPlayer(((PlayerCraft) this.craft).getPilot());
         }
