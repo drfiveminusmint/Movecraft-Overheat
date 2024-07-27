@@ -1,6 +1,7 @@
 package net.countercraft.movecraft.movecraftoverheat.tracking;
 
 import net.countercraft.movecraft.craft.Craft;
+import net.countercraft.movecraft.features.status.events.CraftStatusUpdateEvent;
 import net.countercraft.movecraft.movecraftoverheat.MovecraftOverheat;
 import net.countercraft.movecraft.movecraftoverheat.config.Settings;
 import net.countercraft.movecraft.movecraftoverheat.disaster.Disaster;
