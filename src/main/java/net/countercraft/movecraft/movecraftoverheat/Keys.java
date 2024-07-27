@@ -4,6 +4,8 @@ import net.countercraft.movecraft.craft.type.CraftType;
 import net.countercraft.movecraft.craft.type.property.BooleanProperty;
 import net.countercraft.movecraft.craft.type.property.DoubleProperty;
 import org.bukkit.NamespacedKey;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 public class Keys {
     public static final NamespacedKey BASE_HEAT_CAPACITY = build("base_heat_capacity");
@@ -24,5 +26,9 @@ public class Keys {
         CraftType.registerProperty(new BooleanProperty("UseHeat", USE_HEAT, craftType -> false));
     }
 
-    private static NamespacedKey build (String key) {return new NamespacedKey("movecraft-overheat", key);}
+    @NotNull
+    @Contract("_ -> new")
+    private static NamespacedKey build(String key) {
+        return new NamespacedKey("movecraft-overheat", key);
+    }
 }
