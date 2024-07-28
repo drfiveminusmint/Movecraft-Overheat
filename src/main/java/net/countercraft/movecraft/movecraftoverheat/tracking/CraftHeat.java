@@ -24,9 +24,9 @@ import org.bukkit.boss.BossBar;
 import org.jetbrains.annotations.NotNull;
 
 public class CraftHeat {
-    public static final CraftDataTagKey<Double> HEAT_CAPACITY = CraftDataTagContainer.tryRegisterTagKey(new NamespacedKey("movecraft-overheat", "heat-capacity"), craft -> 0D);
+    public static final CraftDataTagKey<Double> HEAT_CAPACITY = CraftDataTagContainer.tryRegisterTagKey(new NamespacedKey("movecraft-overheat", "heat-capacity"), craft -> (double) craft.getOrigBlockCount() * craft.getType().getDoubleProperty(Keys.HEAT_CAPACITY_PER_BLOCK));
     public static final CraftDataTagKey<Double> HEAT = CraftDataTagContainer.tryRegisterTagKey(new NamespacedKey("movecraft-overheat", "heat"), craft -> 0D);
-    public static final CraftDataTagKey<Double> DISSIPATION = CraftDataTagContainer.tryRegisterTagKey(new NamespacedKey("movecraft-overheat", "dissipation"), craft -> 0D);
+    public static final CraftDataTagKey<Double> DISSIPATION = CraftDataTagContainer.tryRegisterTagKey(new NamespacedKey("movecraft-overheat", "dissipation"), craft -> (double) craft.getOrigBlockCount() * craft.getType().getDoubleProperty(Keys.HEAT_DISSIPATION_PER_BLOCK));
     public static final CraftDataTagKey<Boolean> SILENCED = CraftDataTagContainer.tryRegisterTagKey(new NamespacedKey("movecraft-overheat", "silenced"), craft -> false);
     private final Craft craft;
     private long lastUpdate;
@@ -52,6 +52,9 @@ public class CraftHeat {
         double dPerBlock = craft.getType().getDoubleProperty(Keys.HEAT_DISSIPATION_PER_BLOCK);
 
         Counter<Material> materials = craft.getDataTag(Craft.MATERIALS);
+        if (materials.isEmpty())
+            return;
+
         for (Material m : materials.getKeySet()) {
             if (Settings.HeatSinkBlocks.containsKey(m)) {
                 newCapacity += Settings.HeatSinkBlocks.get(m) * cPerBlock * materials.get(m);
@@ -138,7 +141,7 @@ public class CraftHeat {
     }
 
     private void updateBossBar() {
-        bossBar.setTitle("Heat: " + Math.round(craft.getDataTag(HEAT)*10)/10d + " / " + craft.getDataTag(HEAT_CAPACITY));
+        bossBar.setTitle(String.format("Heat: %.1f / %.1f", craft.getDataTag(HEAT), craft.getDataTag(HEAT_CAPACITY)));
         if (craft.getDataTag(HEAT) >= craft.getDataTag(HEAT_CAPACITY)*1.5) {
             bossBar.setColor(BarColor.RED);
         } else if (craft.getDataTag(HEAT) >= craft.getDataTag(HEAT_CAPACITY)) {
