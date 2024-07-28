@@ -93,6 +93,7 @@ public class CraftHeat {
             heat = 0.0;
         }
         craft.setDataTag(HEAT, heat);
+        updateBossBar();
     }
 
     public void checkDisasters () {
