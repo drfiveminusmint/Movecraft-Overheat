@@ -5,6 +5,7 @@ import net.countercraft.movecraft.craft.Craft;
 import net.countercraft.movecraft.craft.PlayerCraft;
 import net.countercraft.movecraft.craft.datatag.CraftDataTagContainer;
 import net.countercraft.movecraft.craft.datatag.CraftDataTagKey;
+import net.countercraft.movecraft.craft.datatag.CraftDataTagRegistry;
 import net.countercraft.movecraft.movecraftoverheat.Keys;
 import net.countercraft.movecraft.movecraftoverheat.MovecraftOverheat;
 import net.countercraft.movecraft.movecraftoverheat.config.Settings;
@@ -24,10 +25,10 @@ import org.bukkit.boss.BossBar;
 import org.jetbrains.annotations.NotNull;
 
 public class CraftHeat {
-    public static final CraftDataTagKey<Double> HEAT_CAPACITY = CraftDataTagContainer.tryRegisterTagKey(new NamespacedKey("movecraft-overheat", "heat-capacity"), craft -> (double) craft.getOrigBlockCount() * craft.getType().getDoubleProperty(Keys.HEAT_CAPACITY_PER_BLOCK));
-    public static final CraftDataTagKey<Double> HEAT = CraftDataTagContainer.tryRegisterTagKey(new NamespacedKey("movecraft-overheat", "heat"), craft -> 0D);
-    public static final CraftDataTagKey<Double> DISSIPATION = CraftDataTagContainer.tryRegisterTagKey(new NamespacedKey("movecraft-overheat", "dissipation"), craft -> (double) craft.getOrigBlockCount() * craft.getType().getDoubleProperty(Keys.HEAT_DISSIPATION_PER_BLOCK));
-    public static final CraftDataTagKey<Boolean> SILENCED = CraftDataTagContainer.tryRegisterTagKey(new NamespacedKey("movecraft-overheat", "silenced"), craft -> false);
+    public static final CraftDataTagKey<Double> HEAT_CAPACITY = CraftDataTagRegistry.INSTANCE.registerTagKey(new NamespacedKey("movecraft-overheat", "heat-capacity"), craft -> (double) craft.getOrigBlockCount() * craft.getType().getDoubleProperty(Keys.HEAT_CAPACITY_PER_BLOCK));
+    public static final CraftDataTagKey<Double> HEAT = CraftDataTagRegistry.INSTANCE.registerTagKey(new NamespacedKey("movecraft-overheat", "heat"), craft -> 0D);
+    public static final CraftDataTagKey<Double> DISSIPATION = CraftDataTagRegistry.INSTANCE.registerTagKey(new NamespacedKey("movecraft-overheat", "dissipation"), craft -> (double) craft.getOrigBlockCount() * craft.getType().getDoubleProperty(Keys.HEAT_DISSIPATION_PER_BLOCK));
+    public static final CraftDataTagKey<Boolean> SILENCED = CraftDataTagRegistry.INSTANCE.registerTagKey(new NamespacedKey("movecraft-overheat", "silenced"), craft -> false);
     private final Craft craft;
     private long lastUpdate;
     private long lastDisaster;
